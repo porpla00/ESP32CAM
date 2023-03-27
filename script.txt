@@ -1,44 +1,72 @@
-function doGet(e) { 
-Logger.log( JSON.stringify(e) );
-var result = 'Ok';
-if (e.parameter == 'undefined') {
-result = 'No Parameters';
+var ss = SpreadsheetApp.openById('16GuLaOm-c4m5ZFV43qHjx-G1xYcnRIqrdgSSZFama30');
+var sheet = ss.getSheetByName('Sheet1');
+
+
+function doGet(e){
+
+  var read = e.parameter.read;
+
+  if (read !== undefined){
+    return ContentService.createTextOutput(sheet.getRange('A2').getValue());
+  }
+
+  relay_number = e.parameters.relay_number;
+  relay_state = e.parameters.relay_state;
+
+  if (relay_number !== undefined && relay_state !== undefined){
+    update_relay_state(relay_number, relay_state);
+    return ContentService.createTextOutput("Status Updated in Google Sheet");
+  }
+  //----------------------------------------------------------------------------------
 }
-else {
-var sheet_id = '1-xcfZNZqlguORX_tjYM9VcCafmSqJ0M0BmNbh3_AL-Y'; // Spreadsheet ID
-var sheet = SpreadsheetApp.openById(sheet_id).getActiveSheet();
-var newRow = sheet.getLastRow() + 1; 
-var rowData = [];
-var Curr_Date = new Date();
-rowData[0] = Curr_Date; // Date in column A
-var Curr_Time = Utilities.formatDate(Curr_Date, "Asia/Bangkok", 'HH:mm:ss');
-rowData[1] = Curr_Time; // Time in column B
-for (var param in e.parameter) {
-Logger.log('In for loop, param=' + param);
-var value = stripQuotes(e.parameter[param]);
-Logger.log(param + ':' + e.parameter[param]);
-switch (param) {
 
-case 'temperature':
-rowData[2] = value; 
-result = 'OK'; 
-break;
+function update_relay_state(relay_number, relay_state){
+  //------------------------------------------------
+  if(relay_number == 1){
+    var range = sheet.getRange("B2");
+    if(relay_state == 1){
+      range.setValue("ON");
+    } else{
+      range.setValue("OFF");
+    }
+  }
+  //------------------------------------------------
+  else if(relay_number == 2){
+    var range = sheet.getRange("C2");
+    if(relay_state == 1){
+      range.setValue("ON");
+    } else{
+      range.setValue("OFF");
+    }
+  }
+  //------------------------------------------------
+  if(relay_number == 3){
+    var range = sheet.getRange("D2");
+    if(relay_state == 1){
+      range.setValue("ON");
+    } else{
+      range.setValue("OFF");
+    }
+  }
+  //------------------------------------------------
+  if(relay_number == 4){
+    var range = sheet.getRange("E2");
+    if(relay_state == 1){
+      range.setValue("ON");
+    } else{
+      range.setValue("OFF");
+    }
+  }
+  //------------------------------------------------
+}
 
-case 'humidity':
-rowData[3] = value; 
-result += ', OK'; 
-break; 
+
+
+function doPost(e) {
+  var val = e.parameter.value;
   
-default:
-result = "unsupported parameter";
-}
-}
-Logger.log(JSON.stringify(rowData));
-var newRange = sheet.getRange(newRow, 1, 1, rowData.length);
-newRange.setValues([rowData]);
-}
-return ContentService.createTextOutput(result);
-}
-function stripQuotes( value ) {
-return value.replace(/^["']|['"]$/g, "");
+  if (e.parameter.value !== undefined){
+    var range = sheet.getRange('A3');
+    range.setValue(val);
+  }
 }
